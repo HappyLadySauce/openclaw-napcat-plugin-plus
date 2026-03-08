@@ -1,4 +1,4 @@
-# OpenClaw NapCat Plugin
+# OpenClaw NapCat Plugin Plus
 
 [![OpenClaw Plugin](https://img.shields.io/badge/OpenClaw-Plugin-blue.svg)](https://openclaw.ai)
 
