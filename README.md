@@ -4,14 +4,15 @@
 
 QQ 聊天通道插件 for OpenClaw，基于 NapCat (OneBot 11) 实现。部署完毕后，可通过 QQ 与 OpenClaw 对话、下达指令。
 
-## 功能特性
+## 功能介绍
 
-- 接收私聊和群组消息，支持文本与图片等媒体收发
-- 支持群聊/私聊 sessionKey 路由与可配置接收白名单
-- 支持 `action:<接口名>` 方式调用 NapCat 通用接口（好友、群管理、文件、流式、请求与通知等）
-- 与 OpenClaw 无缝集成，完整消息路由与会话管理
+- **消息收发**：接收私聊与群组消息，支持文本、图片等媒体收发，群聊可配置「仅 @ 时回复」或全量处理。
+- **会话路由**：群聊/私聊 sessionKey 路由，可配置接收用户白名单（`allowUsers`），与 OpenClaw 消息路由无缝对接。
+- **NapCat Action**：通过 `action:<接口名>` 调用 NapCat 接口，涵盖好友列表/申请/备注、群列表/成员/禁言/踢人/群名片、文件上传下载、流式文件、群申请/邀请审批、状态/版本/OCR 等。
+- **入站媒体**：入站图片/语音/视频解析为多模态上下文（如 `MediaPath`、`ImageContexts`），供模型使用；支持媒体代理与语音发送（WAV）。
+- **日志与审计**：好友申请、群申请/邀请、Notice 事件可写日志，便于审批与风控。
 
-完整功能说明见 [docs/usage.md](docs/usage.md) 与 [docs/actions.md](docs/actions.md)。
+完整说明见 [docs/usage.md](docs/usage.md) 与 [docs/actions.md](docs/actions.md)。
 
 ## 安装
 
@@ -21,77 +22,47 @@ QQ 聊天通道插件 for OpenClaw，基于 NapCat (OneBot 11) 实现。部署�
 openclaw plugins install openclaw-napcat-plugin-plus
 ```
 
-或从 [GitHub Releases](https://github.com/HappyLadySauce/openclaw-napcat-plugin-plus/releases) 下载 tgz 后执行 `openclaw plugins install ./openclaw-napcat-plugin-plus-*.tgz`。
+或从 [GitHub Releases](https://github.com/HappyLadySauce/openclaw-napcat-plugin-plus/releases) 下载 tgz 后执行 `openclaw plugins install ./openclaw-napcat-plugin-plus-1.0.1.tgz`。
 
 详细步骤见 [docs/install.md](docs/install.md)。
 
-## 配置
+## 配置与使用方法
 
-在 `openclaw.json` 中配置 `channels.napcat` 与 `plugins.entries.napcat`。完整配置项与传输模式说明见 [docs/configuration.md](docs/configuration.md)，NapCat 侧 HTTP/WebSocket 设置见 [docs/napcat-setup.md](docs/napcat-setup.md)。
+在 `openclaw.json` 中配置 `channels.napcat` 与 `plugins.entries.napcat`。传输方式二选一：**HTTP**（推荐）或 **WebSocket**。
 
-## 源码结构
+### HTTP（推荐）
 
-重构后的 `src/` 目录按“入口层 + 共享模块 + 领域模块”组织，后续继续扩展接口时建议优先复用 barrel 入口：
+发消息每次对 NapCat 的 HTTP 端口发起请求，不依赖长连接，**定时任务（cron）触发时投递稳定**。
 
-- `src/channel.ts`：NapCat channel 入口，保留插件声明、配置接入、`sendText`、`sendMedia`
-- `src/webhook.ts`：NapCat webhook 入口，保留 HTTP 入口、事件分发、兼容导出
-- `src/index.ts`：共享模块 barrel，统一导出 target、transport、message format、action params、媒体上下文、日志、消息事件等公共能力
-- `src/actions/index.ts`：action handler barrel，统一导出 `friend` / `group` / `request-notice` / `system` / `file` / `stream` handlers
-- `src/runtime.ts`：插件运行时与当前 channel 配置的全局访问入口
-- `src/ws.ts`：NapCat WebSocket transport、连接管理、心跳、`stream-action` 聚合
-- `src/napcat-transport.ts`：HTTP/WS 发送、token 注入、通用 `callNapCatAction`
-- `src/napcat-message-format.ts`：CQ 媒体格式化、媒体代理 URL、回复消息拼装
-- `src/napcat-media-context-store.ts`：`context_*_id`、TTL、本地缓存清理
-- `src/napcat-inbound-media.ts`：CQ 媒体解析、本地下载、上下文构建
-- `src/napcat-message-event.ts`：入站消息主流程、session 路由、多模态上下文注入、reply dispatcher
-- `src/napcat-friend-request.ts`：好友申请日志与自动处理
-- `src/napcat-group-request.ts`：群申请 / 群邀请事件审计
-- `src/napcat-notice-event.ts`：高价值 notice 事件审计
-- `src/napcat-media-proxy.ts`：`/napcat/media` 代理处理
-- `src/napcat-inbound-log.ts`：入站日志与 parse-error 日志
+**OpenClaw 配置示例：**
 
-维护约定：
-
-- 入口文件优先从 `src/index.ts` 或 `src/actions/index.ts` 导入，减少零散相对路径
-- `runtime.ts` 与 `ws.ts` 也已经纳入 `src/index.ts` 统一导出；上层编排模块可直接经由 barrel 使用
-- 叶子模块尽量直接依赖具体文件，避免从总 barrel 反向导入导致循环依赖
-- 若新增 NapCat action，优先放到 `src/actions/` 下对应领域文件，再由 `src/actions/index.ts` 和 `src/napcat-action-dispatch.ts` 注册
-
-## 开发
-
-### 项目结构
-
-```
-openclaw-napcat-plugin/
-├── index.ts              # 插件入口
-├── openclaw.plugin.json  # 插件元数据
-├── package.json          # npm 配置
-├── src/
-│   ├── channel.ts        # 通道实现（发送消息）
-│   ├── runtime.ts        # 运行时状态管理
-│   ├── webhook.ts        # HTTP 入站处理（接收消息）
-│   └── ws.ts             # WebSocket 传输层（client/server）
+```json
+{
+  "channels": {
+    "napcat": {
+      "enabled": true,
+      "transport": "http",
+      "url": "http://127.0.0.1:3000",
+      "token": "napcat"
+    }
+  },
+  "plugins": { "entries": { "napcat": { "enabled": true } } }
+}
 ```
 
-## 发布到网上（维护者）
+**NapCat 侧**：启用「Http 服务器」（如 Host `0.0.0.0`、Port `3000`）和「Http 客户端」（Url 填 `http://<OpenClaw 地址>/napcat`，消息格式 String）。详见 [docs/napcat-setup.md](docs/napcat-setup.md)。
 
-方便他人通过 npm 或 GitHub 下载安装：
+### WebSocket
 
-1. **发布到 npm**（需先 [npm 登录](https://www.npmjs.com/)）：
-   ```bash
-   npm publish
-   ```
-   发布后用户可执行：`openclaw plugins install openclaw-napcat-plugin-plus`
+- **ws-client**：OpenClaw 主动连 NapCat 的 WebSocket 服务器（NapCat 开「Websocket 服务器」，OpenClaw 配 `transport: "ws-client"`、`wsUrl`、`wsToken`）。
+- **ws-server**：OpenClaw 开 WebSocket 服务，NapCat 用「Websocket 客户端」反向连接（OpenClaw 配 `transport: "ws-server"`、`wsHost`、`wsPort`、`wsToken`）。
 
-2. **或通过 GitHub Releases 提供 tgz**：
-   ```bash
-   npm pack
-   ```
-   将生成的 `openclaw-napcat-plugin-plus-1.0.0.tgz` 上传到 [Releases](https://github.com/HappyLadySauce/openclaw-napcat-plugin-plus/releases)，用户下载后执行：
-   `openclaw plugins install ./openclaw-napcat-plugin-plus-1.0.0.tgz`
+**注意：WebSocket 与 cron 定时任务的兼容问题**
 
-3. **可选：加入 OpenClaw 插件目录**  
-   若希望出现在 OpenClaw 的渠道/插件目录中，可将本包信息加入目录 JSON（见 [文档 - 发现和优先级](https://docs.openclaw.ai/zh-CN/tools/plugin) 中的「包集合」与 `OPENCLAW_PLUGIN_CATALOG_PATHS`）。
+- 使用 **WebSocket**（`ws-client` 或 `ws-server`）时，发消息依赖与 NapCat 的 WS 长连接。网关的 health-monitor 在连接异常时会重启 napcat 通道，若 **cron 定时任务恰好在重启窗口或 WS 未就绪时执行，可能报错或投递失败**。
+- **若你有通过 cron 触发的定时发消息/巡检等需求，请优先使用 HTTP 传输**，并在 NapCat 侧同时启用 HTTP 服务器与指向 OpenClaw `/napcat` 的 HTTP 客户端，以保证定时任务稳定执行。
+
+完整配置项与传输模式说明见 [docs/configuration.md](docs/configuration.md)，NapCat 侧 HTTP/WebSocket 设置见 [docs/napcat-setup.md](docs/napcat-setup.md)。
 
 ## 许可证
 

@@ -18,7 +18,7 @@ openclaw plugins install openclaw-napcat-plugin-plus
    ```
 2. 安装插件（任选其一）：
    ```bash
-   openclaw plugins install openclaw-napcat-plugin-plus-1.0.0.tgz
+   openclaw plugins install openclaw-napcat-plugin-plus-1.0.1.tgz
    # 或从本地目录安装
    openclaw plugins install /path/to/openclaw-napcat-plugin-plus
    ```
