@@ -1,0 +1,13 @@
+{
+  "id": "napcat",
+  "name": "NapCat QQ",
+  "version": "1.0.0",
+  "description": "QQ chat channel plugin for OpenClaw via NapCat (OneBot 11)",
+  "author": "ProperSAMA",
+  "channels": ["napcat"],
+  "configSchema": {
+    "type": "object",
+    "properties": {},
+    "additionalProperties": false
+  }
+}
