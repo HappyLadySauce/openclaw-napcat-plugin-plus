@@ -1,6 +1,6 @@
 {
   "name": "openclaw-napcat-plugin-plus",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "QQ 聊天通道插件 for OpenClaw，基于 NapCat (OneBot 11)",
   "type": "module",
   "author": "ProperSAMA",
