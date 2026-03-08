@@ -24,14 +24,31 @@ QQ 聊天通道插件 for OpenClaw，基于 NapCat (OneBot 11) 实现。
 
 ## 安装方法
 
-1. clone 或直接下载 zip，记住路径
+### 方式一：从 npm 安装（推荐）
+
+若插件已发布到 npm，可直接：
+
 ```bash
-git clone https://github.com/ProperSAMA/openclaw-napcat-plugin.git
+openclaw plugins install openclaw-napcat-plugin-plus
 ```
-2. 安装插件: `openclaw plugins install <路径>`
-3. 将 `skill` 路径中的 `napcat-qq` 放入 OpenClaw 的 skill 目录中
-4. 按需求修改配置文件 `openclaw.json`
-5. 重启 OpenClaw Gateway: `openclaw gateway restart`
+
+### 方式二：从 GitHub 下载安装
+
+1. 在 [Releases](https://github.com/HappyLadySauce/openclaw-napcat-plugin-plus/releases) 下载 `openclaw-napcat-plugin-plus-*.tgz`，或 clone 仓库后本地打包：
+   ```bash
+   git clone https://github.com/HappyLadySauce/openclaw-napcat-plugin-plus.git
+   cd openclaw-napcat-plugin-plus
+   npm pack
+   ```
+2. 安装插件（任选其一）：
+   ```bash
+   openclaw plugins install openclaw-napcat-plugin-plus-1.0.0.tgz
+   # 或从本地目录安装
+   openclaw plugins install /path/to/openclaw-napcat-plugin-plus
+   ```
+3. 将 `skill/napcat-qq` 放入 OpenClaw 的 skill 目录中（若需使用配套 Skill）。
+4. 在 `openclaw.json` 中配置 `channels.napcat` 与 `plugins.entries.napcat`（见下方配置方法）。
+5. 重启 OpenClaw Gateway：`openclaw gateway restart`
 
 ## 源码结构
 
@@ -627,6 +644,26 @@ openclaw-napcat-plugin/
 │   ├── webhook.ts        # HTTP 入站处理（接收消息）
 │   └── ws.ts             # WebSocket 传输层（client/server）
 ```
+
+## 发布到网上（维护者）
+
+方便他人通过 npm 或 GitHub 下载安装：
+
+1. **发布到 npm**（需先 [npm 登录](https://www.npmjs.com/)）：
+   ```bash
+   npm publish
+   ```
+   发布后用户可执行：`openclaw plugins install openclaw-napcat-plugin-plus`
+
+2. **或通过 GitHub Releases 提供 tgz**：
+   ```bash
+   npm pack
+   ```
+   将生成的 `openclaw-napcat-plugin-plus-1.0.0.tgz` 上传到 [Releases](https://github.com/HappyLadySauce/openclaw-napcat-plugin-plus/releases)，用户下载后执行：
+   `openclaw plugins install ./openclaw-napcat-plugin-plus-1.0.0.tgz`
+
+3. **可选：加入 OpenClaw 插件目录**  
+   若希望出现在 OpenClaw 的渠道/插件目录中，可将本包信息加入目录 JSON（见 [文档 - 发现和优先级](https://docs.openclaw.ai/zh-CN/tools/plugin) 中的「包集合」与 `OPENCLAW_PLUGIN_CATALOG_PATHS`）。
 
 ## 许可证
 
