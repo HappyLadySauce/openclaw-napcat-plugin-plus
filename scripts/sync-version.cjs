@@ -28,6 +28,12 @@ console.log("sync-version: openclaw.plugin.json set to version", version);
 // Pack to dist/
 const distDir = path.join(root, "dist");
 fs.mkdirSync(distDir, { recursive: true });
+// Remove previous tgz in dist
+try {
+  for (const f of fs.readdirSync(distDir)) {
+    if (f.endsWith(".tgz")) fs.unlinkSync(path.join(distDir, f));
+  }
+} catch (_) {}
 const tgzName = `${name}-${version}.tgz`;
 execSync(`npm pack --pack-destination="${distDir}"`, { cwd: root, stdio: "inherit" });
 console.log("sync-version: dist/", tgzName);
