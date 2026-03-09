@@ -48,7 +48,7 @@
 - `group:<群号>`
 - `session:napcat:group:<群号>`
 
-![消息格式](image/消息格式.png)
+![消息格式](image/message.png)
 
 注意：
 
