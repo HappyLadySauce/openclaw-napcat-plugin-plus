@@ -1,6 +1,6 @@
 {
   "name": "openclaw-napcat-plugin-plus",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "QQ 聊天通道插件 for OpenClaw，基于 NapCat (OneBot 11)",
   "type": "module",
   "author": "ProperSAMA",
@@ -43,7 +43,10 @@
       "selectionLabel": "NapCat QQ (OneBot 11)",
       "blurb": "QQ 聊天通道，基于 NapCat (OneBot 11)。支持私聊/群聊、媒体、好友与群管理、流式文件等。",
       "order": 50,
-      "aliases": ["napcat", "qq"]
+      "aliases": [
+        "napcat",
+        "qq"
+      ]
     },
     "install": {
       "npmSpec": "openclaw-napcat-plugin-plus",
