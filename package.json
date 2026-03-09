@@ -1,6 +1,6 @@
 {
   "name": "openclaw-napcat-plugin-plus",
-  "version": "1.0.4",
+  "version": "1.0.3",
   "description": "QQ 聊天通道插件 for OpenClaw，基于 NapCat (OneBot 11)",
   "type": "module",
   "author": "ProperSAMA",
@@ -12,6 +12,7 @@
   "homepage": "https://github.com/HappyLadySauce/openclaw-napcat-plugin-plus#readme",
   "scripts": {
     "sync-version": "node scripts/sync-version.cjs",
+    "version:set": "node scripts/sync-version.cjs",
     "version:patch": "npm version patch --no-git-tag-version && node scripts/sync-version.cjs",
     "version:minor": "npm version minor --no-git-tag-version && node scripts/sync-version.cjs",
     "version:major": "npm version major --no-git-tag-version && node scripts/sync-version.cjs",

@@ -33,6 +33,7 @@ openclaw plugins install openclaw-napcat-plugin-plus
 版本以 `package.json` 的 `version` 为准，会通过脚本同步到 `openclaw.plugin.json`。发版流程：
 
 1. 更新代码后执行其一：
+   - `npm run version:set -- 1.0.3`（指定版本号，将 `1.0.3` 改为目标版本）
    - `npm run version:patch`（修订号 +1）
    - `npm run version:minor`（次版本 +1）
    - `npm run version:major`（主版本 +1）
