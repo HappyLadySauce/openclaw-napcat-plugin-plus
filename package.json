@@ -10,6 +10,13 @@
     "url": "git+https://github.com/HappyLadySauce/openclaw-napcat-plugin-plus.git"
   },
   "homepage": "https://github.com/HappyLadySauce/openclaw-napcat-plugin-plus#readme",
+  "scripts": {
+    "sync-version": "node scripts/sync-version.cjs",
+    "version:patch": "npm version patch --no-git-tag-version && node scripts/sync-version.cjs",
+    "version:minor": "npm version minor --no-git-tag-version && node scripts/sync-version.cjs",
+    "version:major": "npm version major --no-git-tag-version && node scripts/sync-version.cjs",
+    "postversion": "node scripts/sync-version.cjs"
+  },
   "keywords": [
     "openclaw",
     "openclaw-plugin",

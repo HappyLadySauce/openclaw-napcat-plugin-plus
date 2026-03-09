@@ -298,7 +298,7 @@ Plus 版支持 **HTTP** 和 **WebSocket** 两种传输方式。
 
 | 文档 | 说明 |
 |------|------|
-| [docs/install.md](docs/install.md) | 安装方式（npm / GitHub / 本地） |
+| [docs/install.md](docs/install.md) | 安装方式（npm / GitHub / 本地）、维护者发版流程 |
 | [docs/configuration.md](docs/configuration.md) | 完整配置项与传输模式 |
 | [docs/napcat-setup.md](docs/napcat-setup.md) | NapCat 侧 HTTP / WebSocket 配置 |
 | [docs/usage.md](docs/usage.md) | 入站媒体、发送消息、跨设备、语音、Skill |
