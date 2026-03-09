@@ -48,6 +48,8 @@
 - `group:<群号>`
 - `session:napcat:group:<群号>`
 
+![消息格式](image/消息格式.png)
+
 注意：
 
 - 若当前上下文里已经给出 `ConversationLabel` / `SessionKey`，优先直接复用 `agent:<agentId>:session:napcat:*` 这个完整会话标签。

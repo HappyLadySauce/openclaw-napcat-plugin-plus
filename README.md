@@ -249,6 +249,8 @@ Plus 版支持 **HTTP** 和 **WebSocket** 两种传输方式。
 
 **容易踩坑**：只写纯数字会被当成 **私聊 QQ 号**。要发到群，**一定要加 `group:` 前缀**。
 
+![消息格式](image/消息格式.png)
+
 更多格式见 [docs/usage.md](docs/usage.md)。
 
 ---
