@@ -36,20 +36,10 @@ jobs:
       - name: Pack tgz
         run: npm pack
 
-      - name: Create zip
-        run: |
-          PKG_NAME=$(node -p "require('./package.json').name")
-          PKG_VERSION=$(node -p "require('./package.json').version")
-          mkdir -p out
-          tar -xzf "${PKG_NAME}-${PKG_VERSION}.tgz" -C out
-          cd out && zip -r "../${PKG_NAME}-${PKG_VERSION}.zip" package && cd ..
-
       - name: Create Release and upload assets
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            openclaw-napcat-plugin-plus-*.tgz
-            openclaw-napcat-plugin-plus-*.zip
+          files: openclaw-napcat-plugin-plus-*.tgz
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

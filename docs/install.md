@@ -47,5 +47,5 @@ openclaw plugins install openclaw-napcat-plugin-plus
    git push origin main
    git push origin --tags
    ```
-4. 在 GitHub 上等待 Actions 完成，Release 及 `.tgz`、`.zip` 将自动生成并上传。  
+4. 在 GitHub 上等待 Actions 完成，Release 及 `.tgz` 将自动生成并上传。  
    **注意**：CI 会校验 tag 与 `package.json` 的 version 一致，不一致则构建失败。
