@@ -4,9 +4,7 @@
 
 本仓库是 **openclaw-napcat-plugin-plus**（Plus 版），在 [原版 openclaw-napcat-plugin](https://github.com/ProperSAMA/openclaw-napcat-plugin) 基础上做了功能增强与扩展。本文档描述的是 **Plus 版** 的安装、配置与使用；若你只关心基础 QQ 通道接入，也可参考原版 README。
 
-![欢迎加入 QQ 群 940648979](docs/image/QQ.jpg)
-
-欢迎加入 QQ 群一起交流 **OpenClaw** 与 **OpenClaw NapCat Plugin Plus** 插件相关内容、提出问题、分享使用经验等。  
+欢迎加入 QQ 群 859727563 群一起交流 **OpenClaw** 与 **OpenClaw NapCat Plugin Plus** 插件相关内容、提出问题、分享使用经验等。  
 也可以在 GitHub Issues 中发帖、拉取代码进行完善。
 
 ---
