@@ -39,16 +39,34 @@
 为了确保正确路由，请明确指定 `channel: "napcat"`，并使用以下目标格式：
 
 私聊目标
-- `agent:<agentId>:session:napcat:private:<QQ号>`（当前会话优先）
+- `agent:<agentId>:session:napcat:private:<QQ号>`（当前会话优先，**必须**完整复用）
 - `private:<QQ号>`
 - `session:napcat:private:<QQ号>`
 
 群聊目标
-- `agent:<agentId>:session:napcat:group:<群号>`（当前会话优先）
+- `agent:<agentId>:session:napcat:group:<群号>`（当前会话优先，**必须**完整复用）
 - `group:<群号>`
 - `session:napcat:group:<群号>`
 
 ![消息格式](image/message.png)
+
+### 强制规范 (Kill Prompts)
+
+在 Skill 或 Agent 提示词中应包含以下硬性约束：
+
+1.  **始终包含 target**：调用 `message` 工具时，`target` 参数是必填项。
+2.  **始终指定 channel**：必须显式设置 `channel: "napcat"`。
+3.  **优先使用完整 SessionKey**：若上下文提供了 `agent:<id>:session:napcat:*` 标签，必须直接原样使用。
+4.  **禁止纯数字 target**：严禁将纯数字作为 `target`，必须补全前缀。
+5.  **SessionTarget 校验**：在处理来自定时任务或复杂会话的消息时，严禁将完整标签降级为 `group:*` 或 `private:*`。
+
+### 错误处理与排查
+
+插件在发送失败时会返回友好的错误提示：
+
+- **未指定目标**：`发送失败：未指定目标 (target)。请确保消息包含正确的 session:napcat:* 或 group:*/private:* 标签。`
+- **业务逻辑错误**：即使 NapCat 返回 HTTP 200，插件也会解析响应体。若 NapCat 提示 `无法获取用户状态` 或 `retcode` 异常，插件会将其转换为可读错误，例如：`发送消息到 group:123456 失败: 无法获取用户状态`。
+- **Action 调用失败**：结构化接口调用失败时会提示具体 action 名，例如：`NapCat Action [get_group_info] 失败: group_id 不能为空`。
 
 注意：
 

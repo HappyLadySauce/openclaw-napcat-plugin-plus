@@ -47,11 +47,18 @@ export const napcatPlugin = {
         deliveryMode: "direct",
         sendText: async ({ to, text, cfg }: any) => {
             const config = cfg.channels?.napcat || {};
+            if (!to) {
+                return { ok: false, error: "发送失败：未指定目标 (target)。请确保消息包含正确的 session:napcat:* 或 group:*/private:* 标签。" };
+            }
             const parsedTarget = parseNapCatTarget(to);
 
             try {
                 if (parsedTarget.kind === "action") {
                     const result = await dispatchNapCatAction(config, parsedTarget.action, text);
+                    if (result && typeof result === "object" && (result.status === "failed" || result.ok === false)) {
+                        const errorMsg = result.wording || result.message || JSON.stringify(result);
+                        return { ok: false, error: `NapCat Action [${parsedTarget.action}] 失败: ${errorMsg}`, result };
+                    }
                     return { ok: true, action: parsedTarget.action, result };
                 }
 
@@ -64,13 +71,23 @@ export const napcatPlugin = {
 
                 console.log(`[NapCat] Sending to ${targetType} ${targetId}: ${text}`);
                 const result = await sendNapCatByTransport(config, endpoint, payload);
+                
+                // 检查 NapCat 业务级错误 (即使 HTTP 200)
+                if (result && typeof result === "object" && (result.status === "failed" || result.ok === false)) {
+                    const errorMsg = result.wording || result.message || JSON.stringify(result);
+                    return { ok: false, error: `发送消息到 ${targetType}:${targetId} 失败: ${errorMsg}`, result };
+                }
+                
                 return { ok: true, result };
             } catch (err: any) {
-                return { ok: false, error: err.message };
+                return { ok: false, error: `发送过程发生错误: ${err.message}` };
             }
         },
         sendMedia: async ({ to, text, mediaUrl, cfg }: any) => {
             const config = cfg.channels?.napcat || {};
+            if (!to) {
+                return { ok: false, error: "发送媒体失败：未指定目标 (target)。" };
+            }
             const parsedTarget = parseNapCatTarget(to);
             if (parsedTarget.kind === "action") {
                 return { ok: false, error: "NapCat action 调用不支持 mediaUrl，请改用 text 传 JSON 参数" };
@@ -91,9 +108,16 @@ export const napcatPlugin = {
 
             try {
                 const result = await sendNapCatByTransport(config, endpoint, payload);
+                
+                // 检查 NapCat 业务级错误 (即使 HTTP 200)
+                if (result && typeof result === "object" && (result.status === "failed" || result.ok === false)) {
+                    const errorMsg = result.wording || result.message || JSON.stringify(result);
+                    return { ok: false, error: `发送媒体到 ${targetType}:${targetId} 失败: ${errorMsg}`, result };
+                }
+
                 return { ok: true, result };
             } catch (err: any) {
-                return { ok: false, error: err.message };
+                return { ok: false, error: `发送媒体过程发生错误: ${err.message}` };
             }
         },
     },

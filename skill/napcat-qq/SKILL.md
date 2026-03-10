@@ -3,6 +3,16 @@ name: napcat-qq
 description: "为 openclaw 处理 QQ 消息与 NapCat 结构化接口调用时，强制使用 napcat 插件 API，并按照消息 target / action target 规则生成参数。适用于“发送QQ消息”“查看好友列表”“处理好友申请”“处理群申请/群邀请”“查看陌生人信息”“修改好友备注”“查看群列表”“查询群成员”“禁言/踢人/改群名片”“查看状态/OCR/最近会话”“上传/查询群文件/获取文件直链”“流式上传/下载文件”“流式下载图片/语音/视频”“查看群系统消息/notice 事件”等请求。"
 ---
 
+# 强制规范 (Kill Prompts)
+
+**必须遵守以下硬性规则，否则会导致消息发送失败或路由错误：**
+
+1.  **始终包含 target**：调用 `message` 工具时，`target` 参数是必填项。严禁省略 `target`。
+2.  **始终指定 channel**：调用 `message` 工具时，必须显式设置 `channel: "napcat"`。
+3.  **优先使用完整 SessionKey**：若上下文（如 `ConversationLabel` 或 `SessionKey`）提供了形如 `agent:<id>:session:napcat:group:<群号>` 的标签，**必须**直接原样使用它作为 `target`。不要试图简化或修改它。
+4.  **禁止纯数字 target**：严禁将纯数字（如 `12345678`）作为 `target`。必须补全前缀，如 `private:12345678` 或 `group:12345678`。
+5.  **禁止臆造字段**：不要在 `message` 工具中使用 `groupId`、`userId`、`to` 等字段替代 `target`。
+
 # 目标
 
 确保 openclaw 处理 QQ 消息与 NapCat 结构化接口调用时只使用本插件的 API，并让 `target` 与 JSON 参数满足 napcat 插件要求。
@@ -115,6 +125,7 @@ description: "为 openclaw 处理 QQ 消息与 NapCat 结构化接口调用时�
 
 # 交互规则
 
+- **SessionTarget 强制要求**：在处理来自定时任务或复杂会话的消息时，必须严格校验 `SessionKey` 或 `ConversationLabel`。若上下文提供的是 `agent:<id>:session:napcat:*` 格式，严禁降级为 `group:*` 或 `private:*`。
 - 若用户未提供 QQ 号或群号，先询问并明确补全后再发送。
 - 若用户提供了 sessionKey 但格式不符合规则，改写为正确格式并说明已规范化。
 - 若上下文里已有 `ConversationLabel` / `SessionKey=agent:<agentId>:session:napcat:*`，发送消息时优先直接复用它，不要自行降级成 `agent:<agentId>:napcat:*`、纯数字或只传 `groupId` / `userId`。
